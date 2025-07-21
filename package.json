@@ -4,8 +4,8 @@
   "description": "practice by yuvraj",
   "scripts": {
     "test": "jest",
-    "start":"parcel index.html",
-    "build":"parcel build index.html"
+    "start": "parcel index.html",
+    "build": "parcel build index.html"
   },
   "repository": {
     "type": "git",
@@ -24,7 +24,11 @@
     "parcel": "^2.15.4"
   },
   "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "node-fetch": "^3.3.2",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^6.30.1"
   }
 }
