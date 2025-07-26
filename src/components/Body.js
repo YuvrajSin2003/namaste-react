@@ -2,6 +2,7 @@ import RestaurantCard from "./RestaurantCard";
 import { useState, useEffect } from "react";
 import resList from "../utils/mockData";
 import Shimmer from "./Shimmer";
+import { Link } from "react-router-dom"
 
 const Body = () => {
   const [listOfRestaurant, setlistOfRestaurant] = useState(resList);
@@ -15,20 +16,32 @@ const Body = () => {
   }, []);
 
   const fetchData = async () => {
-    const data = await fetch(
-      "https://www.swiggy.com/dapi/restaurants/list/v5?lat=25.3176452&lng=82.9739144&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
-    );
+    try {
+      const data = await fetch(
+        "https://www.swiggy.com/dapi/restaurants/list/v5?lat=25.31500&lng=83.00580&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
+      );
+      const json = await data.json();
+      console.log("Full API response:", json);
 
-    const json = await data.json();
-
-    console.log(json.data.cards[4].card.card.gridElements.infoWithStyle.restaurants);
-
-    setlistOfRestaurant(
-      json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants
-    );
-    setfilteredRestaurant(
-      json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants
-    );
+      // Dynamically find the card with restaurants
+      let restaurants = [];
+      if (json?.data?.cards && Array.isArray(json.data.cards)) {
+        for (const card of json.data.cards) {
+          const possibleRestaurants = card?.card?.card?.gridElements?.infoWithStyle?.restaurants;
+          if (possibleRestaurants && Array.isArray(possibleRestaurants)) {
+            restaurants = possibleRestaurants;
+            break;
+          }
+        }
+      }
+      console.log("Extracted restaurants:", restaurants);
+      setlistOfRestaurant(restaurants);
+      setfilteredRestaurant(restaurants);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setlistOfRestaurant([]);
+      setfilteredRestaurant([]);
+    }
   };
 
   return listOfRestaurant.length === 0 ? (
@@ -72,7 +85,7 @@ const Body = () => {
       </div>
       <div className="res-container">
         {filteredRestaurant.map((restaurant) => (
-          <RestaurantCard key={restaurant.info.id} resData={restaurant} />
+          <Link key={restaurant.info.id} to={"/restaurants/" + restaurant.info.id}><RestaurantCard resData={restaurant}/>  </Link> 
         ))}
       </div>
     </div>
