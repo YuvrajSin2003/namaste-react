@@ -1,6 +1,10 @@
+import { use } from "react";
 import { CDN_URL } from "../utils/contants";
+import { useParams } from "react-router-dom";
+
 
 const RestaurantCard = (props) => {
+    const {redId} = useParams();
     const { resData } = props;
     const { cloudinaryImageId, name, avgRating, cuisines, costForTwo , sla} = resData?.info;
     return (

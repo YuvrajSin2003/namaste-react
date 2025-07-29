@@ -3,13 +3,20 @@ import UserClass from "./UserClass";
 import React from "react";
 
 class About extends React.Component {
+    constructor(props){
+        super(props);
+    
+    }
+    componentDidMount() {
+      console.log("parent componentDidMount");
+    }
   render() {
+      
     return (
       <div>
         <h1>About</h1>
         <h2>This is Namaste React Web Series</h2>
-        <User name={"Yuvi in functional"} location={"Varanasi in functional"} />
-        <UserClass name={"Yuvi in class"} location={"Varanasi in class"} />
+        <UserClass name="Yuvraj" location="Delhi" />
       </div>
     );
   }

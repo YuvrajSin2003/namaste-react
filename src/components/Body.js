@@ -2,7 +2,8 @@ import RestaurantCard from "./RestaurantCard";
 import { useState, useEffect } from "react";
 import resList from "../utils/mockData";
 import Shimmer from "./Shimmer";
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
+import useOnlineState from "../utils/useOnlineState";
 
 const Body = () => {
   const [listOfRestaurant, setlistOfRestaurant] = useState(resList);
@@ -23,7 +24,6 @@ const Body = () => {
       const json = await data.json();
       console.log("Full API response:", json);
 
-      // Dynamically find the card with restaurants
       let restaurants = [];
       if (json?.data?.cards && Array.isArray(json.data.cards)) {
         for (const card of json.data.cards) {
@@ -43,6 +43,11 @@ const Body = () => {
       setfilteredRestaurant([]);
     }
   };
+
+  const onlineState = useOnlineState();
+
+  if (onlineState === false)
+    return <h1>Looks like you are not connected to the internet</h1>;
 
   return listOfRestaurant.length === 0 ? (
     <Shimmer />
@@ -85,7 +90,12 @@ const Body = () => {
       </div>
       <div className="res-container">
         {filteredRestaurant.map((restaurant) => (
-          <Link key={restaurant.info.id} to={"/restaurants/" + restaurant.info.id}><RestaurantCard resData={restaurant}/>  </Link> 
+          <Link
+            key={restaurant.info.id}
+            to={"/restaurants/" + restaurant.info.id}
+          >
+            <RestaurantCard resData={restaurant} />
+          </Link>
         ))}
       </div>
     </div>
