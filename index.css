@@ -26,20 +26,29 @@
     width: 200px;
     height: 450px;
     border: 1px solid black;
+    display: block;
+    transition: transform .3s ease, filter .3s ease;
+   
+
+
 }
 .search{
     padding: 10px;
 }
 .res-card:hover{
     cursor: pointer;
-    border: 5px solid rgb(0, 18, 81);
+    transform: scale(1.05);   /* 5 % larger */
+    filter: brightness(1.15); /* 15 % lighter */
+     background-color: #ffcaca;
 }
 .res-logo{
     width: 190px;
 }
 .res-container{
     display: flex;
+    flex-wrap: wrap;
     margin:20px ;
+    
 }
 .filter-btn{
     margin: 10px;
