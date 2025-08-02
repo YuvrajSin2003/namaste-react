@@ -21,7 +21,10 @@
   },
   "homepage": "https://github.com/YuvrajSin2003/namaste-react#readme",
   "devDependencies": {
-    "parcel": "^2.15.4"
+    "autoprefixer": "^10.4.21",
+    "parcel": "^2.15.4",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17"
   },
   "dependencies": {
     "cors": "^2.8.5",
