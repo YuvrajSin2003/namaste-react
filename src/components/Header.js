@@ -1,14 +1,16 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { LOGO_URL } from "../utils/contants";
 import { Link } from "react-router-dom";
 import useOnlineState from "../utils/useOnlineState";
+import UserContext from "../utils/UserContext";
 
 
- const Header = () => {
+const Header = () => {
+  const [btnNameReact, setbtnNameReact] = useState("Login");
+  const onLineStatus = useOnlineState();
+  const {loggedinUser} = useContext(UserContext);
+  console.log(loggedinUser);
 
-    const [btnNameReact , setbtnNameReact] = useState("Login")
-
-    const onLineStatus = useOnlineState();
     return(
         <div className="flex justify-between bg-pink-100 shadow-lg p-4  ">
             <div className="border-2 border-black">
@@ -26,7 +28,9 @@ import useOnlineState from "../utils/useOnlineState";
                 <button className="flex rounded border border-black" onClick={() => {
                     btnNameReact === "LogIn" ? setbtnNameReact("LogOut") : setbtnNameReact("LogIn");
 
-                }}>{btnNameReact}</button>
+                }}>{btnNameReact}
+                </button>
+                <li className="px-4 font-bold">{loggedinUser}</li>
              </ul>
             </div>
         </div>

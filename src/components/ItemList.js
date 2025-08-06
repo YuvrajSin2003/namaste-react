@@ -1,24 +1,43 @@
+import {CDN_URL} from "../utils/contants";
+
 const ItemList = ({ items }) => {
-  // Add these debug logs
   console.log("Items received:", items);
   console.log("Items length:", items?.length);
   
-  // Safety check
-  if (!items || !Array.isArray(items)) {
+  if (!items || !Array.isArray(items) || items.length === 0) {
     return <div>No items to display</div>;
   }
 
   return (
     <div>
       {items.map((item) => {
-        console.log("Item:", item); // Debug each item
+        console.log("Item:", item);
+        
+        // Add safety checks for item structure
+        if (!item?.card?.info?.id) {
+          console.warn("Item missing required properties:", item);
+          return null;
+        }
+
+        const itemInfo = item.card.info;
+        
         return (
-          <div key={item.card.info.id} className="p-2 m-2 border-black border-b-2">
-            <div>
-              <span>{item.card.info.name}</span>
-              <span>₹{(item.card.info.price / 100).toFixed(2)}</span>
+          <div key={itemInfo.id} className="p-2 m-2 border-black border-b-2 text-left">
+            {itemInfo.imageId && (
+              <img 
+                src={CDN_URL + itemInfo.imageId} 
+                alt={itemInfo.name || 'Food item'} 
+                className="w-20 h-20" 
+              />
+            )}
+            <button className="bg-gray-200 p-1 rounded-md">Add+</button>
+            <div className="p-2 flex justify-between items-center">
+              <span>{itemInfo.name || 'Unknown item'}</span>
+              <span>₹{itemInfo.price ? (itemInfo.price / 100).toFixed(2) : 'N/A'}</span>
             </div>
-            <p className="text-xs">{item.card.info.description}</p>
+            {itemInfo.description && (
+              <p className="text-xs">{itemInfo.description}</p>
+            )}
           </div>
         );
       })}
