@@ -1,19 +1,20 @@
-import RestaurantCard , {withPromotedLabel} from "./RestaurantCard";
-import { useState, useEffect } from "react";
+import RestaurantCard, { withPromotedLabel } from "./RestaurantCard";
+import { useState, useEffect, useContext } from "react";
 import resList from "../utils/mockData";
 import Shimmer from "./Shimmer";
 import { Link } from "react-router-dom";
 import useOnlineState from "../utils/useOnlineState";
+import UserContext from "../utils/UserContext";
 
 const Body = () => {
   const [listOfRestaurant, setlistOfRestaurant] = useState(resList);
   const [searchText, setSearchText] = useState("");
   const [filteredRestaurant, setfilteredRestaurant] = useState(resList);
 
-  const RestaurantCardPromoted = withPromotedLabel(RestaurantCard); // RestaurantCard is a components and is input to withPromotedLabel and this return will stored in RestaurantCardPromoted
-  
+  const RestaurantCardPromoted = withPromotedLabel(RestaurantCard);
 
-  console.log("body rerender" ,listOfRestaurant );
+  const { loggedInUser, setUserName } = useContext(UserContext);
+  const onlineState = useOnlineState();
 
   useEffect(() => {
     fetchData();
@@ -30,13 +31,15 @@ const Body = () => {
       let restaurants = [];
       if (json?.data?.cards && Array.isArray(json.data.cards)) {
         for (const card of json.data.cards) {
-          const possibleRestaurants = card?.card?.card?.gridElements?.infoWithStyle?.restaurants;
+          const possibleRestaurants =
+            card?.card?.card?.gridElements?.infoWithStyle?.restaurants;
           if (possibleRestaurants && Array.isArray(possibleRestaurants)) {
             restaurants = possibleRestaurants;
             break;
           }
         }
       }
+
       console.log("Extracted restaurants:", restaurants);
       setlistOfRestaurant(restaurants);
       setfilteredRestaurant(restaurants);
@@ -47,8 +50,6 @@ const Body = () => {
     }
   };
 
-  const onlineState = useOnlineState();
-
   if (onlineState === false)
     return <h1>Looks like you are not connected to the internet</h1>;
 
@@ -57,48 +58,75 @@ const Body = () => {
   ) : (
     <div className="body">
       <div className="filter">
-        <div className="search m-4 , p-4 ">
+        <div className="search m-4 p-4">
+          {/* Search Bar */}
           <input
             type="text"
             className="rounded border border-black"
+            placeholder="Search Restaurant"
             value={searchText}
             onChange={(e) => {
               setSearchText(e.target.value);
             }}
           />
-          <button className="px-4 bg-green-100 m-4 rounded border border-black"
+          <button
+            className="px-4 bg-green-100 m-4 rounded border border-black"
             onClick={() => {
-              console.log(searchText);
-              const filteredRestaurant = listOfRestaurant.filter((res) =>
-                res.info.name.toLowerCase().includes(searchText.toLowerCase())
+              const filtered = listOfRestaurant.filter((res) =>
+                res?.info?.name
+                  ?.toLowerCase()
+                  ?.includes(searchText.toLowerCase())
               );
-              setfilteredRestaurant(filteredRestaurant);
+              setfilteredRestaurant(filtered);
             }}
           >
             Search
           </button>
-        <button
-          className="px-4 bg-gray-100 m-4 rounded border border-black"
-          onClick={() => {
-            const filteredList = listOfRestaurant.filter(
-              (res) => res.info.avgRating > 4
-            );
-            setfilteredRestaurant(filteredList);
-            console.log("Filtered List:", filteredList);
-          }}
-        >
-          Top Rated Restaurants
-        </button>
+
+          {/* Top Rated Filter */}
+          <button
+            className="px-4 bg-gray-100 m-4 rounded border border-black"
+            onClick={() => {
+              const filtered = listOfRestaurant.filter(
+                (res) => res?.info?.avgRating > 4
+              );
+              setfilteredRestaurant(filtered);
+            }}
+          >
+            Top Rated Restaurants
+          </button>
+
+          {/* Username Update */}
+          <div className="w-80 flex items-center gap-2 mt-4">
+            <label className="font-semibold">Username:</label>
+            <input
+              className="border border-black p-2 rounded w-full"
+              value={loggedInUser}
+              onChange={(e) => setUserName(e.target.value)}
+            />
+          </div>
         </div>
       </div>
+
+      {/* If no results found */}
+      {filteredRestaurant.length === 0 && (
+        <h2 className="m-4 p-4 text-red-500 font-bold">
+          No Restaurants match your filter!
+        </h2>
+      )}
+
+      {/* Restaurant List */}
       <div className="res-container flex flex-wrap">
         {filteredRestaurant.map((restaurant) => (
           <Link
-            key={restaurant.info.id}
-            to={"/restaurants/" + restaurant.info.id}
+            key={restaurant?.info?.id}
+            to={"/restaurants/" + restaurant?.info?.id}
           >
-            <RestaurantCard resData={restaurant} />
-            {/* {restaurant.data.promoted ? (<RestaurantCardPromoted />) : ( <RestaurantCard resData={restaurant} />)} */}
+            {restaurant?.info?.promoted ? (
+              <RestaurantCardPromoted resData={restaurant} />
+            ) : (
+              <RestaurantCard resData={restaurant} />
+            )}
           </Link>
         ))}
       </div>
