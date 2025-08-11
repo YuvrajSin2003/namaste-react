@@ -1,6 +1,9 @@
 import {CDN_URL} from "../utils/contants";
+import { addItem } from "../utils/cartSlice";
+import { useDispatch } from "react-redux";
 
 const ItemList = ({ items }) => {
+  const dispatch = useDispatch(); 
   console.log("Items received:", items);
   console.log("Items length:", items?.length);
   
@@ -20,6 +23,10 @@ const ItemList = ({ items }) => {
         }
 
         const itemInfo = item.card.info;
+
+        const handleAddItems = (item) => {
+          dispatch(addItem(item))
+        }
         
         return (
           <div key={itemInfo.id} className="p-2 m-2 border-black border-b-2 text-left">
@@ -30,7 +37,7 @@ const ItemList = ({ items }) => {
                 className="w-20 h-20" 
               />
             )}
-            <button className="bg-gray-200 p-1 rounded-md">Add+</button>
+            <button className="bg-gray-200 p-1 rounded-md" onClick={() => handleAddItems(item)}>Add+</button>
             <div className="p-2 flex justify-between items-center">
               <span>{itemInfo.name || 'Unknown item'}</span>
               <span>₹{itemInfo.price ? (itemInfo.price / 100).toFixed(2) : 'N/A'}</span>
